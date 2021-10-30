@@ -41,6 +41,10 @@ public class Shaders {
 
     }
 
+    public void createPointLightListUniform(String uniformName, int size) throws Exception {
+        for (int i = 0; i < size; i++) createPointLightUniform(uniformName + "[" + i + "]");
+    }
+
     public void createPointLightUniform(String uniformName) throws Exception{
         createUniform(uniformName+".colour");
         createUniform(uniformName+".position");
@@ -50,12 +54,15 @@ public class Shaders {
         createUniform(uniformName+".att.exponent");
     }
 
+    public void createSpotLightListUniform(String uniformName, int size) throws Exception {
+        for (int i = 0; i < size; i++) createSpotLightUniform(uniformName + "[" + i + "]");
+    }
+
     public void createSpotLightUniform(String uniformName) throws Exception{
         createPointLightUniform(uniformName+".pl");
         createUniform(uniformName+".conedir");
         createUniform(uniformName+".cutoff");
     }
-
 
     public void createDirectionalLightUniform(String uniformName) throws Exception{
         createUniform(uniformName+".colour");
@@ -106,6 +113,25 @@ public class Shaders {
 
 
     }
+
+    public void setUniform(String uniformName, SpotLight spotLight,int pos){
+        setUniform(uniformName+"["+pos+"]",spotLight);
+    }
+
+    public void setUniform(String uniformName, PointLight pointLight,int pos){
+        setUniform(uniformName+"["+pos+"]",pointLight);
+    }
+
+    public void setUniform(String uniformName, PointLight[] pointLights){
+        int numLights = pointLights != null ? pointLights.length : 0;
+        for(int i=0;i<numLights;i++) setUniform(uniformName, pointLights[i],i);
+    }
+
+    public void setUniform(String uniformName, SpotLight[] spotLight){
+        int numLights = spotLight != null ? spotLight.length : 0;
+        for(int i=0;i<numLights;i++) setUniform(uniformName, spotLight[i],i);
+    }
+
 
     public  void setUniform(String uniformsName,DirectionalLight dirLight){
         setUniform(uniformsName+".colour",dirLight.getColor());
