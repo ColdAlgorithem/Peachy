@@ -1,7 +1,5 @@
 package Engine;
 
-import Game.Renderer;
-
 
 public class GameEngine implements Runnable {
 

@@ -5,7 +5,7 @@ import Engine.Graphics.Mesh;
 
 public class GameItem {
 
-    private final Mesh mesh;
+    private Mesh mesh;
 
     private final Vector3f position;
 
@@ -13,15 +13,16 @@ public class GameItem {
 
     private final Vector3f rotation;
 
-    public GameItem(Mesh mesh){
-
-        this.mesh = mesh;
-        position = new Vector3f(0,0,0);
+    public GameItem(){
+        position = new Vector3f();
         scale = 1;
-        rotation = new Vector3f(0,0,0);
+        rotation = new Vector3f();
 
+    }
 
-
+    public GameItem(Mesh mesh){
+        this();
+        this.mesh = mesh;
     }
     public Vector3f getPosition(){
 
@@ -61,5 +62,7 @@ public class GameItem {
         return mesh;
 
     }
-
+    public void setMesh(Mesh mesh){
+        this.mesh = mesh;
+    }
 }

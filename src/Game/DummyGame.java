@@ -1,13 +1,11 @@
 package Game;
 
 
-import Engine.GameItem;
+import Engine.*;
 import Engine.Graphics.*;
-import Engine.IGameLogic;
-import Engine.MouseInput;
-import Engine.WindowMangaer;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -27,17 +25,16 @@ public class DummyGame implements IGameLogic{
 
     private float lightAngle;
 
-    private Vector3f ambientLight;
+    private SceneLight sceneLight;
 
-    private PointLight[] pointLightList;
-
-    private SpotLight[] spotLightList;
-
-    private DirectionalLight directionalLight ;
+    private Hud hud;
 
     private float spotAngle = 0;
 
     private float spotInc = 1;
+
+    /*DummyGame je placeholder za dejanski game oz. igra bo mela identično vse razen, da se bo v update dejansko dogajalo nekaj zabavnega in
+    namesto samo mesh objektov bodo drugi objekti npr. enemy ,player objekti,itd. Kot predlog vse skripte za game mejta v te mapi, da bo engine ločen od same igre.*/
 
     public DummyGame(){
         renderer = new Renderer();
@@ -47,6 +44,7 @@ public class DummyGame implements IGameLogic{
     }
 
     @Override
+    /*Sem sodi vse, kar se izvede samo ob začetku igre*/
     public void init(WindowMangaer window) throws Exception{
 
         renderer.init(window);
@@ -54,19 +52,18 @@ public class DummyGame implements IGameLogic{
         float reflectance=1f;
 
         Mesh mesh = OBJLoader.loadMesh("/Game/resources/models/cube.obj");
-        /*Preverita ce lahko podata relativno pot za Texture, ker mani noče brati iz relativne :(*/
-        Texture texture = new Texture("D:\\JavaGame\\Peachy\\src\\Game\\resources\\texture\\grassblock.png");
+        Texture texture = new Texture("src/Game/resources/texture/grassblock.png");
         Material material = new Material(texture,reflectance);
+
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);
         gameItem.setScale(0.5f);
         gameItem.setPosition(0,0,-2);
-
         gameItems = new GameItem[]{gameItem};
-
         //Point light
-        ambientLight = new Vector3f(0.3f,0.3f,0.3f);
+        sceneLight = new SceneLight();
 
+        sceneLight.setAmbientLight(new Vector3f(0.3f,0.3f,0.3f));
 
         Vector3f lightColour = new Vector3f(1, 1, 1);
         Vector3f lightPosition = new Vector3f(0, 0, 1);
@@ -74,7 +71,7 @@ public class DummyGame implements IGameLogic{
         PointLight pointLight = new PointLight(lightColour,lightPosition,lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f,0.0f,1.0f);
         pointLight.setAttenuation(att);
-        pointLightList = new PointLight[]{pointLight};
+        sceneLight.setPointLightList(new PointLight[]{pointLight});
 
         //spot light
         lightPosition = new Vector3f(0, 0.0f, 10f);
@@ -84,23 +81,24 @@ public class DummyGame implements IGameLogic{
         Vector3f coneDir = new Vector3f(0, 0, -1);
         float cutoff = (float) Math.cos(Math.toRadians(140));
         SpotLight spotLight = new SpotLight(sl_pointLight, coneDir, cutoff);
-        spotLightList = new SpotLight[]{spotLight,new SpotLight(spotLight)};
+        sceneLight.setSpotLightList(new SpotLight[]{spotLight,new SpotLight(spotLight)});
 
         //"sonce" oz. global light
         lightPosition = new Vector3f(-1,0,0);
         lightColour = new Vector3f(1, 1, 1);
-        directionalLight = new DirectionalLight(lightColour, lightPosition, lightIntensity);
+        sceneLight.setDirectionalLight(new DirectionalLight(lightColour, lightPosition, lightIntensity));
 
-
-
+        hud = new Hud("DEMO");
     }
 
 
     @Override
+    /*Input za kamero je treba podobno narediti za player in njegov class*/
     public void input(WindowMangaer window, MouseInput mouseInput){
         //Nazdor kamere v engine
         /*Pozneje po treba kamero narediti bolj dinamično ampak za
-        * zdej se mi zdi da je okej oz. sam spremenit bi moral v senčilniku izračun pos kamere*/
+        * zdej se mi zdi da je okej oz. sam spremenit bi moral v senčilniku izračun pos kamere oz.
+        * sam premakni kamero na mesto ko se bo igra pognala oz. kjer igralec stoji kdor koli bo to delal*/
 
         cameraInc.set(0,0,0);
 
@@ -119,22 +117,27 @@ public class DummyGame implements IGameLogic{
         } else if (window.isKeyPressed(GLFW_KEY_X)) {
             cameraInc.y = 1;
         }
-        float lightPos = pointLightList[0].getPosition().z;
+        SpotLight[] spotLightList = sceneLight.getSpotLightList();
+        float lightPos = spotLightList[0].getPointLight().getPosition().z;
         if (window.isKeyPressed(GLFW_KEY_N)) {
-            this.pointLightList[0].getPosition().z = lightPos + 0.1f;
+            spotLightList[0].getPointLight().getPosition().z = lightPos + 0.1f;
         } else if (window.isKeyPressed(GLFW_KEY_M)) {
-            this.pointLightList[0].getPosition().z = lightPos - 0.1f;
+            spotLightList[0].getPointLight().getPosition().z = lightPos - 0.1f;
         }
 
     }
     @Override
+    /*sem sodi vse kar se dogaja med igro*/
     public void update(float interval,MouseInput mouseInput){
 
+        SpotLight[] spotLightList = sceneLight.getSpotLightList();
+        DirectionalLight directionalLight = sceneLight.getDirectionalLight();
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
         if (mouseInput.isRightButtonPressed()) {
             Vector2f rotVec = mouseInput.getDisplVec();
             camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+            hud.rotateCompass(-camera.getRotation().y);
         }
 
         //spotAngle += spotInc * 0.05f;
@@ -177,7 +180,8 @@ public class DummyGame implements IGameLogic{
     @Override
     public void render(WindowMangaer window){
 
-        renderer.render(window,camera,gameItems,ambientLight,pointLightList,spotLightList,directionalLight);
+        hud.updateSize(window);
+        renderer.render(window, camera, gameItems, sceneLight, hud);
 
     }
     @Override
@@ -185,7 +189,7 @@ public class DummyGame implements IGameLogic{
         for(GameItem gameItem : gameItems){
             gameItem.getMesh().cleanUp();
         }
-
+        hud.cleanup();
     }
 
 }

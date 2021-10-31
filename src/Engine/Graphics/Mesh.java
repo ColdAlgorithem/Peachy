@@ -33,7 +33,7 @@ public class Mesh {
 
     private final int vertexCount;
 
-    private Engine.Graphics.Material material;
+    private Material material;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         FloatBuffer posBuffer = null;
@@ -71,7 +71,8 @@ public class Mesh {
             vboId = glGenBuffers();
             vboIdList.add(vboId);
             vecNormalsBuffer = MemoryUtil.memAllocFloat(normals.length);
-            vecNormalsBuffer.put(normals).flip();
+            if(vecNormalsBuffer.capacity() > 0) vecNormalsBuffer.put(normals).flip();
+            else vecNormalsBuffer = MemoryUtil.memAllocFloat(positions.length);
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, vecNormalsBuffer, GL_STATIC_DRAW);
             glEnableVertexAttribArray(2);
@@ -87,6 +88,7 @@ public class Mesh {
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
+
         } finally {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
@@ -106,17 +108,16 @@ public class Mesh {
     public void render() {
         Texture texture = material.getTexture();
         if(texture != null ) {
-            // Activate firs texture bank
+
             glActiveTexture(GL_TEXTURE0);
-            // Bind the texture
+
             glBindTexture(GL_TEXTURE_2D, texture.getId());
         }
-        // Draw the mesh
+
         glBindVertexArray(getVaoId());
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 
-        // Restore state
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
@@ -124,21 +125,20 @@ public class Mesh {
     public void cleanUp() {
         glDisableVertexAttribArray(0);
 
-        // Delete the VBOs
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         for (int vboId : vboIdList) {
             glDeleteBuffers(vboId);
         }
 
-        // Delete the texture
         Texture texture = material.getTexture();
         if(texture!= null) texture.cleanup();
 
-        // Delete the VAO
         glBindVertexArray(0);
         glDeleteVertexArrays(vaoId);
     }
-
+    public void deleteBuffers(){
+        glDisableVertexAttribArray(0);
+    }
 
     public Material getMaterial(){ return  material;}
 
