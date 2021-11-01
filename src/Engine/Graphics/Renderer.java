@@ -1,6 +1,11 @@
 package Engine.Graphics;
 
 import Engine.*;
+import Engine.Graphics.lights.DirectionalLight;
+import Engine.Graphics.lights.PointLight;
+import Engine.Graphics.lights.SpotLight;
+import Engine.items.GameItem;
+import Engine.items.SkyBox;
 import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL11.*;
 

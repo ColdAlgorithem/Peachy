@@ -1,6 +1,8 @@
 package Engine;
 
 import Engine.Graphics.Mesh;
+import Engine.items.GameItem;
+import Engine.items.SkyBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;

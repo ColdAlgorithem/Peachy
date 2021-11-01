@@ -1,5 +1,7 @@
 package Engine;
 
+import Engine.items.GameItem;
+
 public interface IHud {
 
     GameItem[] getGameItems();

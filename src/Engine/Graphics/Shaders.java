@@ -1,5 +1,8 @@
 package Engine.Graphics;
 
+import Engine.Graphics.lights.DirectionalLight;
+import Engine.Graphics.lights.PointLight;
+import Engine.Graphics.lights.SpotLight;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -114,11 +117,11 @@ public class Shaders {
 
     }
 
-    public void setUniform(String uniformName, SpotLight spotLight,int pos){
+    public void setUniform(String uniformName, SpotLight spotLight, int pos){
         setUniform(uniformName+"["+pos+"]",spotLight);
     }
 
-    public void setUniform(String uniformName, PointLight pointLight,int pos){
+    public void setUniform(String uniformName, PointLight pointLight, int pos){
         setUniform(uniformName+"["+pos+"]",pointLight);
     }
 
@@ -133,7 +136,7 @@ public class Shaders {
     }
 
 
-    public  void setUniform(String uniformsName,DirectionalLight dirLight){
+    public  void setUniform(String uniformsName, DirectionalLight dirLight){
         setUniform(uniformsName+".colour",dirLight.getColor());
         setUniform(uniformsName+".direction",dirLight.getDirection());
         setUniform(uniformsName+".intensity",dirLight.getIntensity());

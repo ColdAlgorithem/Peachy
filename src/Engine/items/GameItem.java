@@ -1,4 +1,4 @@
-package Engine;
+package Engine.items;
 
 import org.joml.Vector3f;
 import Engine.Graphics.Mesh;

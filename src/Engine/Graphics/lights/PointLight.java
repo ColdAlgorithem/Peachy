@@ -1,7 +1,6 @@
-package Engine.Graphics;
+package Engine.Graphics.lights;
 
 import org.joml.Vector3f;
-import org.lwjgl.system.CallbackI;
 
 public class PointLight {
     private Vector3f color;

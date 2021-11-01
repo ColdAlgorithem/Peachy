@@ -1,6 +1,6 @@
 package Engine.Graphics;
 
-import Engine.GameItem;
+import Engine.items.GameItem;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

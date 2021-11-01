@@ -1,12 +1,10 @@
-package Engine;
+package Engine.items;
 
 import Engine.Graphics.FontTexture;
 import Engine.Graphics.Material;
 import Engine.Graphics.Mesh;
-import Engine.Graphics.Texture;
+import Engine.Utils;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 

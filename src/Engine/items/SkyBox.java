@@ -1,4 +1,4 @@
-package Engine;
+package Engine.items;
 
 import Engine.Graphics.Material;
 import Engine.Graphics.Mesh;

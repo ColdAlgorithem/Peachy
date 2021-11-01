@@ -1,11 +1,11 @@
 package Game;
 
-
 import Engine.*;
 import Engine.Graphics.*;
 import Engine.Graphics.lights.DirectionalLight;
 import Engine.items.GameItem;
 import Engine.items.SkyBox;
+import Engine.items.Terrain;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -14,7 +14,9 @@ import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class DummyGame implements IGameLogic{
+/*ta class je namenjen testiranju engina in ni za uporabo igre za igro piši v DummyGame class oz .file*/
+
+public class TestGame implements IGameLogic{
 
     private static final float MOUSE_SENSITIVITY = 0.2f;
 
@@ -39,7 +41,7 @@ public class DummyGame implements IGameLogic{
     /*DummyGame je placeholder za dejanski game oz. igra bo mela identično vse razen, da se bo v update dejansko dogajalo nekaj zabavnega in
     namesto samo mesh objektov bodo drugi objekti npr. enemy ,player objekti,itd. Kot predlog vse skripte za game mejta v te mapi, da bo engine ločen od same igre.*/
 
-    public DummyGame(){
+    public TestGame(){
         renderer = new Renderer();
         camera = new Camera();
         cameraInc = new Vector3f();
@@ -58,35 +60,15 @@ public class DummyGame implements IGameLogic{
 
         float reflectance=1f;
 
-        float blockScale = 0.5f;
-        float posX=0;
-        float posY=0;
-        float posZ=0;
-        float offset=blockScale*2;
-        float skyBoxScale = 10.0f;
+        float skyBoxScale = 50.0f;
+        float terrainScale = 10;
+        int terrainSize = 3;
+        float minY = -0.1f;
+        float maxY = 0.1f;
+        int textInc = 40;
+        Terrain terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "src/Game/resources/texture/heightmap.png", "src/Game/resources/texture/terrain.png", textInc);
+        scene.setGameItems(terrain.getGameItems());
 
-
-        Mesh mesh = OBJLoader.loadMesh("/Game/resources/models/cube.obj");
-        Texture texture = new Texture("src/Game/resources/texture/grassblock.png");
-        Material material = new Material(texture,reflectance);
-        mesh.setMaterial(material);
-
-        int ROWS=5;
-        int COLS=5;
-        GameItem[] gameItems = new GameItem[ROWS * COLS];
-        for (int i=0;i<ROWS;i++){
-            for (int j=0;j<COLS;j++) {
-                GameItem gameItem = new GameItem(mesh);
-                gameItem.setScale(blockScale);
-                gameItem.setPosition(posX, posY, posZ);
-                gameItems[i * COLS + j] = gameItem;
-
-                posX+=offset;
-            }
-            posX=0;
-            posZ+=offset;
-        }
-        scene.setGameItems(gameItems);
 
         SkyBox skyBox = new SkyBox("/Game/resources/models/skybox.obj","src/Game/resources/texture/skybox.png");
         skyBox.setScale(skyBoxScale);

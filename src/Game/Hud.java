@@ -1,15 +1,14 @@
 package Game;
 
-import Engine.GameItem;
+import Engine.items.GameItem;
 import Engine.Graphics.FontTexture;
 import Engine.Graphics.Material;
 import Engine.Graphics.Mesh;
 import Engine.Graphics.OBJLoader;
 import Engine.IHud;
-import Engine.TextItem;
+import Engine.items.TextItem;
 import Engine.WindowMangaer;
 import org.joml.Vector4f;
-import org.lwjgl.system.CallbackI;
 
 import java.awt.*;
 
